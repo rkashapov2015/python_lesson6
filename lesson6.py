@@ -1,27 +1,26 @@
-from ReaderFile import ReaderFile
+from readerFile import ReaderFile
 from pprint import pprint
 
-class Main:
-    __cookbook = {}
-    __filename = ''
-    def __init__(self, filename):
-        self.filename = filename
-    def run(self):
-        reader = ReaderFile(self.filename)
-        self.__cookbook = reader.readCookBook()
-        self.getShopListByDishes(['Запеченный картофель', 'Омлет'], 5)
-    def getShopListByDishes(self, dishes, personCount):
-        if len(self.__cookbook) == 0:
-            return False
-        shopList = {}
-        for nameDish in self.__cookbook.keys():
-            for ingredient in self.__cookbook[nameDish]:
-                if ingredient['ingredient_name'] not in shopList:
-                    shopList[ingredient['ingredient_name']] = {'measure': ingredient['measure'], 'quantity': ingredient['quantity'] * personCount}
+def get_shop_list_by_dishes(dishes, person_count):
+    reader = ReaderFile('sample_cookbook.txt')
+    cookbook = reader.readCookBook()
+    shop_list = {}
+
+    if cookbook:
+        for name_dish in cookbook:
+            for ingredient in cookbook[name_dish]:
+                ingredient_name = ingredient['ingredient_name']
+                quantity = ingredient['quantity']
+                if ingredient_name not in shop_list:
+                    shop_list[ingredient_name] = {
+                        'measure': ingredient['measure'], 
+                        'quantity': quantity * person_count
+                    }
                 else:
-                    shopList[ingredient['ingredient_name']]['quantity'] += ingredient['quantity'] * personCount
-        pprint(shopList)
+                    shop_list[ingredient_name]['quantity'] += quantity * person_count
 
+    return shop_list
 
-main = Main('sample_cookbook.txt')
-main.run()
+shop_list = get_shop_list_by_dishes(['Запеченный картофель', 'Омлет'], 2)
+
+pprint(shop_list)
